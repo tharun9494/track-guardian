@@ -1,12 +1,62 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Train, Radio } from "lucide-react";
+import StatusCard from "@/components/StatusCard";
+import VibrationChart from "@/components/VibrationChart";
+import InfoPanel from "@/components/InfoPanel";
+import { useFirebaseData } from "@/hooks/useFirebaseData";
 
 const Index = () => {
+  const { vibration, status, lastUpdate, history, connected, isSafe } = useFirebaseData();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background grid-bg flex flex-col">
+      {/* Header */}
+      <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="rounded-lg bg-primary/10 p-2">
+              <Train className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-lg md:text-xl font-bold tracking-tight text-foreground">
+                AI Railway Structural Monitoring System
+              </h1>
+              <p className="text-xs text-muted-foreground tracking-wide">
+                Real-time crack detection & vibration analysis
+              </p>
+            </div>
+          </div>
+
+          <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
+            <Radio className={`h-3.5 w-3.5 ${connected ? "text-safe animate-pulse" : "text-danger"}`} />
+            <span>{connected ? "Connected" : "Disconnected"}</span>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 container mx-auto px-4 py-6 md:py-8 space-y-6">
+        {/* Status Card */}
+        <StatusCard status={status} isSafe={isSafe} />
+
+        {/* Metrics */}
+        <InfoPanel
+          vibration={vibration}
+          lastUpdate={lastUpdate}
+          connected={connected}
+          dataPoints={history.length}
+        />
+
+        {/* Chart */}
+        <VibrationChart data={history} isSafe={isSafe} />
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-border bg-card/50 py-4">
+        <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground/60">
+          <span>Powered by ESP32 + Firebase</span>
+          <span>© 2026 Railway Structural Monitoring</span>
+        </div>
+      </footer>
     </div>
   );
 };

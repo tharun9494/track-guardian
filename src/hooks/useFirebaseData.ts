@@ -1,9 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import { database, ref, onValue } from "@/lib/firebase";
+import { soundAlert } from "@/utils/soundAlert";
 
 interface VibrationDataPoint {
   value: number;
   time: string;
+  timestamp: number;
+}
+
+interface CrackEvent {
+  id: string;
+  vibration: number;
+  dateTime: string;
+  status: string;
   timestamp: number;
 }
 
@@ -13,6 +22,8 @@ export function useFirebaseData() {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [history, setHistory] = useState<VibrationDataPoint[]>([]);
   const [connected, setConnected] = useState(false);
+  const [maxVibration, setMaxVibration] = useState<number>(0);
+  const [crackEvents, setCrackEvents] = useState<CrackEvent[]>([]);
 
   useEffect(() => {
     const vibrationRef = ref(database, "/vibration");
@@ -22,12 +33,40 @@ export function useFirebaseData() {
       const val = snapshot.val();
       if (val !== null) {
         const now = new Date();
-        setVibration(Number(val));
+        const vibrationValue = Number(val);
+        setVibration(vibrationValue);
         setLastUpdate(now);
         setConnected(true);
+        
+        // Track maximum vibration
+        setMaxVibration(prev => Math.max(prev, vibrationValue));
+        
+        // Log crack events if vibration > 500
+        if (vibrationValue > 500) {
+          // Play sound alert for crack detection
+          soundAlert.playCrackAlert();
+          
+          const newEvent: CrackEvent = {
+            id: `event-${now.getTime()}`,
+            vibration: vibrationValue,
+            dateTime: now.toLocaleString("en-US", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              hour12: false
+            }),
+            status: "CRACK DETECTED",
+            timestamp: now.getTime()
+          };
+          setCrackEvents(prev => [newEvent, ...prev].slice(0, 50)); // Keep last 50 events
+        }
+        
         setHistory((prev) => {
           const point: VibrationDataPoint = {
-            value: Number(val),
+            value: vibrationValue,
             time: now.toLocaleTimeString("en-US", { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" }),
             timestamp: now.getTime(),
           };
@@ -53,5 +92,5 @@ export function useFirebaseData() {
 
   const isSafe = status === "TRACK SAFE";
 
-  return { vibration, status, lastUpdate, history, connected, isSafe };
+  return { vibration, status, lastUpdate, history, connected, isSafe, maxVibration, crackEvents };
 }

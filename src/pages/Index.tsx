@@ -2,10 +2,13 @@ import { Train, Radio } from "lucide-react";
 import StatusCard from "@/components/StatusCard";
 import VibrationChart from "@/components/VibrationChart";
 import InfoPanel from "@/components/InfoPanel";
+import EventLogTable from "@/components/EventLogTable";
+import PDFReportGenerator from "@/components/PDFReportGenerator";
+import SoundToggle from "@/components/SoundToggle";
 import { useFirebaseData } from "@/hooks/useFirebaseData";
 
 const Index = () => {
-  const { vibration, status, lastUpdate, history, connected, isSafe } = useFirebaseData();
+  const { vibration, status, lastUpdate, history, connected, isSafe, maxVibration, crackEvents } = useFirebaseData();
 
   return (
     <div className="min-h-screen bg-background grid-bg flex flex-col">
@@ -26,9 +29,12 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
-            <Radio className={`h-3.5 w-3.5 ${connected ? "text-safe animate-pulse" : "text-danger"}`} />
-            <span>{connected ? "Connected" : "Disconnected"}</span>
+          <div className="hidden sm:flex items-center gap-4 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <Radio className={`h-3.5 w-3.5 ${connected ? "text-safe animate-pulse" : "text-danger"}`} />
+              <span>{connected ? "Connected" : "Disconnected"}</span>
+            </div>
+            <SoundToggle />
           </div>
         </div>
       </header>
@@ -41,6 +47,7 @@ const Index = () => {
         {/* Metrics */}
         <InfoPanel
           vibration={vibration}
+          maxVibration={maxVibration}
           lastUpdate={lastUpdate}
           connected={connected}
           dataPoints={history.length}
@@ -48,6 +55,16 @@ const Index = () => {
 
         {/* Chart */}
         <VibrationChart data={history} isSafe={isSafe} />
+
+        {/* Event Log Table */}
+        <EventLogTable events={crackEvents} />
+
+        {/* PDF Report Generator */}
+        <PDFReportGenerator
+          maxVibration={maxVibration}
+          crackEvents={crackEvents}
+          currentDate={new Date()}
+        />
       </main>
 
       {/* Footer */}

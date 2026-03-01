@@ -1,4 +1,4 @@
-import { Activity, Clock, Wifi, WifiOff, Gauge, ThermometerSun } from "lucide-react";
+import { Activity, Clock, Wifi, WifiOff, Gauge, ThermometerSun, TrendingUp } from "lucide-react";
 
 interface MetricCardProps {
   label: string;
@@ -31,20 +31,27 @@ const MetricCard = ({ label, value, icon, subtitle, highlight }: MetricCardProps
 
 interface InfoPanelProps {
   vibration: number;
+  maxVibration: number;
   lastUpdate: Date;
   connected: boolean;
   dataPoints: number;
 }
 
-const InfoPanel = ({ vibration, lastUpdate, connected, dataPoints }: InfoPanelProps) => {
+const InfoPanel = ({ vibration, maxVibration, lastUpdate, connected, dataPoints }: InfoPanelProps) => {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
       <MetricCard
         label="Vibration"
         value={vibration}
         icon={<Activity className="h-4 w-4" />}
         subtitle="Current sensor reading"
         highlight
+      />
+      <MetricCard
+        label="Max Vibration"
+        value={maxVibration}
+        icon={<TrendingUp className="h-4 w-4 text-primary" />}
+        subtitle="Highest recorded"
       />
       <MetricCard
         label="Last Update"

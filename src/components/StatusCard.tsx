@@ -6,13 +6,15 @@ interface StatusCardProps {
 }
 
 const StatusCard = ({ status, isSafe }: StatusCardProps) => {
+  const isCrackDetected = !isSafe && status === "CRACK DETECTED";
+  
   return (
     <div
       className={`relative overflow-hidden rounded-xl border p-8 transition-all duration-500 ${
         isSafe
           ? "border-safe/30 bg-safe/5 glow-safe glow-safe-pulse"
           : "border-danger/30 bg-danger/5 glow-danger glow-danger-pulse"
-      }`}
+      } ${isCrackDetected ? "red-blink" : ""}`}
     >
       {/* Scan line effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

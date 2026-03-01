@@ -87,6 +87,10 @@
     animation: danger-pulse 1.5s ease-in-out infinite;
   }
 
+  .red-blink {
+    animation: red-blink 0.5s ease-in-out infinite;
+  }
+
   .grid-bg {
     background-image:
       linear-gradient(hsl(var(--grid-line) / 0.5) 1px, transparent 1px),
@@ -107,6 +111,17 @@
 @keyframes danger-pulse {
   0%, 100% { box-shadow: 0 0 20px hsl(var(--danger) / 0.4), 0 0 60px hsl(var(--danger) / 0.15); }
   50% { box-shadow: 0 0 40px hsl(var(--danger) / 0.6), 0 0 100px hsl(var(--danger) / 0.3); }
+}
+
+@keyframes red-blink {
+  0%, 50% { 
+    background-color: hsl(0, 72%, 51%);
+    box-shadow: 0 0 20px hsl(0, 72%, 51% / 0.8);
+  }
+  25%, 75% { 
+    background-color: hsl(0, 72%, 30%);
+    box-shadow: 0 0 10px hsl(0, 72%, 51% / 0.4);
+  }
 }
 
 @keyframes scan {

@@ -13,8 +13,18 @@ interface CrackEvent {
   vibration: number;
   dateTime: string;
   status: string;
+  severity: string;
   timestamp: number;
 }
+
+// Function to determine crack severity based on vibration level
+const getCrackSeverity = (vibration: number): string => {
+  if (vibration >= 4000) return "DANGER";
+  if (vibration >= 2000) return "MEDIUM CRACK";
+  if (vibration >= 1000) return "LITTLE CRACK";
+  if (vibration >= 500) return "MINOR CRACK";
+  return "TRACK SAFE";
+};
 
 export function useFirebaseData() {
   const [vibration, setVibration] = useState<number>(0);
@@ -46,6 +56,8 @@ export function useFirebaseData() {
           // Play sound alert for crack detection
           soundAlert.playCrackAlert();
           
+          const severity = getCrackSeverity(vibrationValue);
+          
           const newEvent: CrackEvent = {
             id: `event-${now.getTime()}`,
             vibration: vibrationValue,
@@ -59,6 +71,7 @@ export function useFirebaseData() {
               hour12: false
             }),
             status: "CRACK DETECTED",
+            severity: severity,
             timestamp: now.getTime()
           };
           setCrackEvents(prev => [newEvent, ...prev].slice(0, 50)); // Keep last 50 events

@@ -5,6 +5,7 @@ interface CrackEvent {
   vibration: number;
   dateTime: string;
   status: string;
+  severity: string;
   timestamp: number;
 }
 
@@ -16,6 +17,17 @@ const EventLogTable = ({ events }: EventLogTableProps) => {
   // Filter events to show only those from the last 1 minute
   const oneMinuteAgo = Date.now() - 60000; // 60 seconds in milliseconds
   const recentEvents = events.filter(event => event.timestamp > oneMinuteAgo);
+
+  // Function to get severity color
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case "DANGER": return "text-danger bg-danger/10 border-danger/20";
+      case "MEDIUM CRACK": return "text-orange-600 bg-orange-100 border-orange-200";
+      case "LITTLE CRACK": return "text-yellow-600 bg-yellow-100 border-yellow-200";
+      case "MINOR CRACK": return "text-yellow-500 bg-yellow-50 border-yellow-100";
+      default: return "text-muted-foreground bg-muted/50 border-border";
+    }
+  };
   return (
     <div className="rounded-xl border border-border bg-card p-6">
       <div className="flex items-center justify-between mb-6">
@@ -55,6 +67,9 @@ const EventLogTable = ({ events }: EventLogTableProps) => {
                   Vibration
                 </th>
                 <th className="text-left py-3 px-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  Severity
+                </th>
+                <th className="text-left py-3 px-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Status
                 </th>
               </tr>
@@ -80,6 +95,11 @@ const EventLogTable = ({ events }: EventLogTableProps) => {
                         {event.vibration}
                       </span>
                     </div>
+                  </td>
+                  <td className="py-3 px-2">
+                    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getSeverityColor(event.severity)}`}>
+                      {event.severity}
+                    </span>
                   </td>
                   <td className="py-3 px-2">
                     <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-danger/10 text-danger border border-danger/20">

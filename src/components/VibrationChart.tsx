@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
   Area,
   AreaChart,
+  ReferenceLine,
 } from "recharts";
 
 interface VibrationChartProps {
@@ -56,16 +57,69 @@ const VibrationChart = ({ data, isSafe }: VibrationChartProps) => {
                 vertical={false}
               />
               <XAxis
-                dataKey="time"
                 tick={{ fontSize: 10, fill: "hsl(215, 15%, 55%)" }}
                 tickLine={false}
                 axisLine={false}
                 interval="preserveStartEnd"
+                tickFormatter={(value, index) => (index + 1).toString()}
               />
               <YAxis
                 tick={{ fontSize: 10, fill: "hsl(215, 15%, 55%)" }}
                 tickLine={false}
                 axisLine={false}
+                domain={[0, 'dataMax + 100']}
+              />
+              <ReferenceLine
+                y={500}
+                stroke="hsl(45, 93%, 47%)"
+                strokeDasharray="3 3"
+                strokeWidth={1.5}
+                label={{
+                  value: "Minor Crack",
+                  position: "right",
+                  fill: "hsl(45, 93%, 47%)",
+                  fontSize: 9,
+                  style: { fill: "hsl(45, 93%, 47%)" }
+                }}
+              />
+              <ReferenceLine
+                y={1000}
+                stroke="hsl(32, 95%, 44%)"
+                strokeDasharray="3 3"
+                strokeWidth={1.5}
+                label={{
+                  value: "Little Crack",
+                  position: "right",
+                  fill: "hsl(32, 95%, 44%)",
+                  fontSize: 9,
+                  style: { fill: "hsl(32, 95%, 44%)" }
+                }}
+              />
+              <ReferenceLine
+                y={2000}
+                stroke="hsl(15, 95%, 50%)"
+                strokeDasharray="3 3"
+                strokeWidth={1.5}
+                label={{
+                  value: "Medium Crack",
+                  position: "right",
+                  fill: "hsl(15, 95%, 50%)",
+                  fontSize: 9,
+                  style: { fill: "hsl(15, 95%, 50%)" }
+                }}
+              />
+              <ReferenceLine
+                y={4000}
+                stroke="hsl(0, 72%, 51%)"
+                strokeDasharray="5 5"
+                strokeWidth={2}
+                label={{
+                  value: "Danger",
+                  position: "right",
+                  fill: "hsl(0, 72%, 51%)",
+                  fontSize: 10,
+                  style: { fill: "hsl(0, 72%, 51%)" }
+                }}
               />
               <Tooltip
                 contentStyle={{
